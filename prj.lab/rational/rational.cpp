@@ -1,8 +1,19 @@
 #include <iostream>
 #include <numeric>
+#include <algorithm>
 #include <exception>
 #include "rational.h"
 
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+int lcm(int a, int b) {
+    return (a / gcd(a, b)) * b;
+}
 
 Rational::Rational() {}
 
@@ -22,9 +33,9 @@ Rational::Rational(int num, int denum) {
 }
 
 void Rational::normalise() {
-    int gcd = std::gcd(numenator, denumenator);
-    numenator /= gcd;
-    denumenator /= gcd;
+    int rgcd = gcd(numenator, denumenator);
+    numenator /= rgcd;
+    denumenator /= rgcd;
 }
 
 Rational& Rational::operator=(const Rational& oper) {
@@ -45,9 +56,9 @@ Rational operator-(const Rational& oper) {
 }
 
 Rational operator+(const Rational& lhs, const Rational& rhs) {
-    int lcm = std::lcm(lhs.denumenator, rhs.denumenator);
-    int lhsr = lcm / lhs.denumenator;
-    int rhsr = lcm / rhs.denumenator;
-    Rational res(lhs.numenator * lhsr + rhs.numenator * rhsr, lcm);
+    int rlcm = lcm(lhs.denumenator, rhs.denumenator);
+    int lhsr = rlcm / lhs.denumenator;
+    int rhsr = rlcm / rhs.denumenator;
+    Rational res(lhs.numenator * lhsr + rhs.numenator * rhsr, rlcm);
     return res;
 }
